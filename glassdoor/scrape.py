@@ -1,11 +1,9 @@
 from bs4 import BeautifulSoup as bsoup
-from urllib import request
+import requests
 import dateutil.parser as dateparse
 import re
 from functools import reduce
 import pandas as pd
-import argparse
-import os
 
 argp = argparse.ArgumentParser()
 argp.add_argument('-u', '--url', help='main glassdoor url', type=str, default='https://www.glassdoor.ca')
@@ -18,10 +16,9 @@ headers={'User-Agent':user_agent}
 parent_url = args.url + '{}'
 
 get_url = parent_url.format(args.first_page)
-req = request.Request(get_url, None, headers)
-gd_resp = request.urlopen(req)
-content = bsoup(gd_resp.read(), 'html.parser')
-gd_resp.close()
+resp = requests.get(get_url, headers=headers)
+content = bsoup(resp.content, 'html.parser')
+resp.close()
 expired = False
 
 result_df = None
@@ -63,7 +60,7 @@ while not expired:
     if 'Work/Life Balance' in subratings:
         subratings['work_life_rating'] = subratings.pop('Work/Life Balance')
     if 'Career Opportunities' in subratings:
-            subratings['career_rating'] = subratings.pop('Career Opportunities')
+        subratings['career_rating'] = subratings.pop('Career Opportunities')
     if 'Culture & Values' in subratings:
         subratings['culture_rating'] = subratings.pop('Culture & Values')
     if 'Senior Management' in subratings:
