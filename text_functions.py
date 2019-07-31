@@ -29,7 +29,7 @@ def no_punct(txt):
     return txt
 
 def no_number(txt):
-    return re.sub(r'[$\s]*\d+\.?\d*','',txt)
+    return re.sub(r'(\$\s*)?\d+[\.,\d]*','',txt)
 
 def add_negation(x):
     pattern = r'not? +(\w+)'
